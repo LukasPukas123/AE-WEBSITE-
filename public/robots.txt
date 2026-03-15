@@ -1,0 +1,11 @@
+# robots.txt for Automate Effect
+# https://automateeffect.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://automateeffect.com/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
