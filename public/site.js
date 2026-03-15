@@ -365,25 +365,4 @@
     setTimeout(typePhrase, 2000);
   }
 
-  /* ---------- NAVBAR HIDE ON SCROLL DOWN (mobile) ---------- */
-  if (window.innerWidth <= 768) {
-    var lastScrollY = 0;
-    var navbarEl = document.getElementById('navbar');
-    var scrollThreshold = 10;
-
-    window.addEventListener('scroll', function () {
-      var currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down
-        navbarEl.style.transform = 'translateY(-100%)';
-      } else if (currentScrollY < lastScrollY - scrollThreshold) {
-        // Scrolling up
-        navbarEl.style.transform = 'translateY(0)';
-      }
-      
-      lastScrollY = currentScrollY;
-    }, { passive: true });
-  }
-
 })();
