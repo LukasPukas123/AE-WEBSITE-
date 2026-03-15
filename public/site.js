@@ -96,19 +96,66 @@
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var success = document.getElementById('formSuccess');
+      var errorEl = document.getElementById('formError');
       var submitBtn = contactForm.querySelector('button[type="submit"]');
+
+      // Hide previous messages
+      if (success) success.classList.remove('show');
+      if (errorEl) {
+        errorEl.classList.remove('show');
+        errorEl.textContent = '';
+      }
+
+      // Gather form data
+      var formData = {
+        firstName: contactForm.querySelector('#firstName').value,
+        lastName: contactForm.querySelector('#lastName').value,
+        email: contactForm.querySelector('#email').value,
+        phone: contactForm.querySelector('#phone').value,
+        service: contactForm.querySelector('#service').value,
+        message: contactForm.querySelector('#message').value,
+        website: contactForm.querySelector('#website').value // honeypot
+      };
+
       submitBtn.textContent = 'Sending...';
       submitBtn.disabled = true;
-      // Simulate send
-      setTimeout(function () {
-        if (success) success.classList.add('show');
-        contactForm.reset();
-        submitBtn.textContent = 'Send Message';
-        submitBtn.disabled = false;
-        setTimeout(function () {
-          if (success) success.classList.remove('show');
-        }, 5000);
-      }, 1200);
+
+      fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (result) {
+          submitBtn.textContent = 'Send Message';
+          submitBtn.disabled = false;
+
+          if (result.ok && result.data.success) {
+            if (success) success.classList.add('show');
+            contactForm.reset();
+            setTimeout(function () {
+              if (success) success.classList.remove('show');
+            }, 5000);
+          } else {
+            var errorMsg = result.data.error || 'Something went wrong. Please try again.';
+            if (errorEl) {
+              errorEl.textContent = errorMsg;
+              errorEl.classList.add('show');
+            }
+          }
+        })
+        .catch(function () {
+          submitBtn.textContent = 'Send Message';
+          submitBtn.disabled = false;
+          if (errorEl) {
+            errorEl.textContent = 'Could not connect to the server. Please try again later.';
+            errorEl.classList.add('show');
+          }
+        });
     });
   }
 
